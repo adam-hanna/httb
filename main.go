@@ -1,0 +1,86 @@
+package main
+
+import (
+	"fmt"
+	"net/http"
+	"os"
+	"testing"
+
+	"strings"
+
+	"github.com/adam-hanna/httb/cli"
+)
+
+func main() {
+	// Grab the user inputed CLI flags
+	cliFlags := cli.FlagsStruct{}
+	if err := cli.StartCLI(&cliFlags, os.Args); err != nil {
+		fmt.Printf("Error grabbing command line args\n%v\n", err)
+		os.Exit(1) // note: is there a safe exit int, like os.Error?
+	}
+
+	if len([]rune(cliFlags.Method)) > 1 {
+		res := testing.Benchmark(func(b *testing.B) {
+			req, err := http.NewRequest(cliFlags.Method, cliFlags.URL, nil)
+			if err != nil {
+				fmt.Printf("Couldn't build request; Err: %v\n", err)
+				b.Fatal(err)
+			}
+
+			header := http.Header{}
+			if len(cliFlags.Cookies) >= 1 {
+				header.Add("Cookie", cliFlags.Cookies)
+			}
+			req.Header = header
+
+			m, err := parseHeaders(cliFlags.Headers)
+			if err != nil {
+				fmt.Printf("Couldn't parse headers; Err: %v\n", err)
+				b.Fatal(err)
+			}
+
+			for k, v := range m {
+				req.Header.Add(k, v)
+			}
+
+			tr := &http.Transport{}
+			defer tr.CloseIdleConnections()
+			cl := &http.Client{
+				Transport: tr,
+			}
+
+			b.ResetTimer()
+
+			for n := 0; n < b.N; n++ {
+				httpRes, err := cl.Do(req)
+				if err != nil {
+					fmt.Printf("Couldn't send request; Err: %v\n", err)
+					b.Fatal(err)
+				}
+				if httpRes.StatusCode != cliFlags.HTTPCode {
+					fmt.Printf("Wanted %d status code, received: %d\n", cliFlags.HTTPCode, httpRes.StatusCode)
+					b.Fatal()
+				}
+			}
+		})
+		fmt.Println(res)
+	}
+}
+
+func parseHeaders(headers string) (map[string]string, error) {
+	m := make(map[string]string)
+	parts := strings.Split(headers, ";")
+
+	for _, part := range parts {
+		if len(part) > 1 {
+			i := strings.Index(part, "=")
+			if i == -1 {
+				return m, fmt.Errorf("malformed header: %s; expected key1=val1", part)
+			}
+
+			m[part[:i]] = part[i+1:]
+		}
+	}
+
+	return m, nil
+}
