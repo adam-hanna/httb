@@ -1,5 +1,5 @@
 # httb
-An httb benchmarking tool written in go
+An http benchmarking tool written in go
 
 ## Installation
 `$ go install .`

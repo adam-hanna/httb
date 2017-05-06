@@ -20,6 +20,7 @@ func main() {
 	}
 
 	if len([]rune(cliFlags.Method)) > 1 {
+		fmt.Printf("Benchmarking %s\n  # requests               ns/op\n", cliFlags.URL)
 		res := testing.Benchmark(func(b *testing.B) {
 			req, err := http.NewRequest(cliFlags.Method, cliFlags.URL, nil)
 			if err != nil {
