@@ -1,5 +1,9 @@
 # httb
+<<<<<<< HEAD
+An httb benchmarking tool written in go
+=======
 An http benchmarking tool written in go
+>>>>>>> release/0.0.2
 
 ## Installation
 `$ go install .`
@@ -23,12 +27,16 @@ GLOBAL OPTIONS:
 ~~~
 
 ## Example
+<<<<<<< HEAD
+`$ httb -u http://localhost:8080/require -c session=MDAxMTdiMjEtNGMzNS00ZTQzLTk3ZTgtOGUyZGNhNDk5Mzk189zxC86Cw7LGlJyn1r9X_OhpLCmHKxMQvcNjIRKbldjlluO8MqaJp074MlLEMt4Gz8ck6E68OsnYOQkcMM4QCg== -z X-CSRF-Token=HTOiO4EQ_oEAYtio36uFjw==`
+=======
 ~~~bash
 $ httb -u http://localhost:8080/require -c session=MDAxMTdiMjEtNGMzNS00ZTQzLTk3ZTgtOGUyZGNhNDk5Mzk189zxC86Cw7LGlJyn1r9X_OhpLCmHKxMQvcNjIRKbldjlluO8MqaJp074MlLEMt4Gz8ck6E68OsnYOQkcMM4QCg== -z X-CSRF-Token=HTOiO4EQ_oEAYtio36uFjw==
 Benchmarking http://localhost:8080/require
   # requests               ns/op
     3000            477354 ns/op
 ~~~
+>>>>>>> release/0.0.2
 
 ## LICENSE
 ~~~
